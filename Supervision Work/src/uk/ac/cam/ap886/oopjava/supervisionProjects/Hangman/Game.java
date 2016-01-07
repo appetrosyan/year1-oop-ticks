@@ -16,7 +16,7 @@ public class Game {
 
 	public Game(){
 		dictionary = new ArrayDictionary ("words.txt");
-		ui = new CLI(this);
+		ui = new GUIMainWindow(this);
 		player = new SimplePlayer(ui.playerName());
 		player.save();
 		ui.greet(player);
@@ -56,6 +56,9 @@ public class Game {
 
 	public int attempt(char letter){
 		boolean found=false;
+		if(letter ==0){
+			return -1;
+		}
 		for(char l:guessedLetters){
 			if (l==letter){
 				return -1;
