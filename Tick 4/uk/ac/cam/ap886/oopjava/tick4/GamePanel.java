@@ -2,6 +2,7 @@ package uk.ac.cam.ap886.oopjava.tick4;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+
 import javax.swing.JPanel;
 
 import uk.ac.cam.acr31.life.World;
@@ -15,9 +16,11 @@ public class GamePanel extends JPanel {
 	private World current = null;
 	
 	//----------------------------------------
+	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(width, height);
 	}
+	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (current == null) return;
@@ -36,9 +39,6 @@ public class GamePanel extends JPanel {
 			g.drawLine(width-1, 0, width-1, height);
 			g.drawLine(0, height-1, width, height-1);
 			//Closed the curve
-			//TODO: Using for loops call the drawLine method on "g", 
-			//      repeatedly to draw a grid of grey lines to delimit
-			//      the border of the cells in the game board
 		}
 	}
 	private void computeSize() {

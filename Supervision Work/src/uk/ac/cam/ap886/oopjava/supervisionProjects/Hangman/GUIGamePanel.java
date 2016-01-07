@@ -1,5 +1,7 @@
 package uk.ac.cam.ap886.oopjava.supervisionProjects.Hangman;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -8,6 +10,7 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class GUIGamePanel extends JPanel {
 	private String pressedKey;
+	private int hangmanStage;
 
 	public GUIGamePanel(){
 		super();
@@ -49,12 +52,12 @@ public class GUIGamePanel extends JPanel {
 				case "Back Slash":
 				case "Alt Graph":
 				case "Context Menu":
-				
+
 					return;
 				default:
 					pressedKey= key;
 				}
-				
+
 			}
 
 			@Override
@@ -64,11 +67,68 @@ public class GUIGamePanel extends JPanel {
 		addKeyListener(listener);
 		setFocusable(true);
 	}
-	
+
 	public String getPressedKey(){
 		return pressedKey;
 	}
-	
-	
+
+	@Override
+	protected void paintComponent(Graphics g){
+		super.paintComponent(g);
+		super.setSize(new Dimension (364,364));
+		g.setColor(java.awt.Color.WHITE);
+		g.fillRect(0, 0, 300, 300);
+		drawHangman(hangmanStage,g);
+		g.setColor(java.awt.Color.GRAY);
+		g.drawLine(0, 0, 0, 300);
+		g.drawLine(0, 0, 300, 0);
+		g.drawLine(300,0, 300, 300);
+		g.drawLine(0,300,300,300);
+		g.setColor(java.awt.Color.BLUE);
+		
+		//Draw Hangman 
+		g.fillRect(0,150 , 4, 150);
+		g.fillRect(0, 0, 4, 150);
+		g.fillRect(0, 0, 180, 4);
+		g.setColor(java.awt.Color.RED);
+		g.fillRect(180, 0, 4, 120);
+		
+	}
+
+	public void drawHangman(int stage, Graphics g){
+		g.setColor(java.awt.Color.BLUE);
+		switch(stage){
+		case 1:
+			g.fillRect(0,150 , 4, 300);
+		case 2:
+			g.fillRect(0, 0, 4, 150);
+		case 3:
+			g.fillRect(0, 0, 180, 4);
+		case 4:
+			g.fillRect(180, 0, 4, 80);
+		case 5:
+			g.fillRect(180,80,8,40);
+		case 6:
+			g.setColor(java.awt.Color.GREEN);
+			g.fillRect(0, 250, 300, 50);
+			g.setColor(java.awt.Color.BLUE);
+		case 7:
+			g.setColor(java.awt.Color.RED);
+			g.fillRect(100, 200, 100, 20);
+			g.setColor(java.awt.Color.BLUE);
+		case 8:
+			g.fillOval(180, 120, 80, 80);
+			g.setColor(java.awt.Color.WHITE);
+			g.fillOval(200, 140, 40, 40);
+			g.setColor(java.awt.Color.BLUE);
+		}
+	}
+
+	public void setHangmanStage(int newHangmanStage) {
+		hangmanStage = newHangmanStage;
+
+	}
+
+
 
 }

@@ -124,6 +124,8 @@ public class GUIMainWindow implements UserInterface{
 	public void status() {
 		lblLettersTried.setText(game.getGuessedLetters().toString());
 		openedWord.setText(game.getOpened());
+		hangmanPanel.setHangmanStage(game.getHangmanStage());
+		hangmanPanel.repaint();
 		return;
 		//Useless in terms of GUI;
 
