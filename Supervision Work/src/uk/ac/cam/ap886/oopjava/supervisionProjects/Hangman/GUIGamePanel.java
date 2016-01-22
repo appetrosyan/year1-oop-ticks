@@ -16,53 +16,19 @@ public class GUIGamePanel extends JPanel {
 		super();
 		KeyListener listener = new KeyListener() {
 			@Override
-			public void keyTyped(KeyEvent e) {
-			}
+			public void keyTyped(KeyEvent e) {}
 
 			@Override
 			public void keyPressed(KeyEvent e) {
 				//System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
 				String key=KeyEvent.getKeyText(e.getKeyCode());
-				switch (key){
-				case "Shift":
-				case "Windows":
-				case "Ctrl":
-				case "Alt":
-				case "Caps Lock":
-				case "Space":
-				case "Comma":
-				case "0":
-				case "1":
-				case "2":
-				case "3":
-				case "4":
-				case "5":
-				case "6":
-				case "7":
-				case "9":
-				case "8":
-				case "Minus":
-				case "Equals":
-				case "Backspace":
-				case "Open Bracket":
-				case "Close Bracket":
-				case "Semicolon":
-				case "Quote":
-				case "Slash":
-				case "Back Slash":
-				case "Alt Graph":
-				case "Context Menu":
-
-					return;
-				default:
-					pressedKey= key;
+				if(key.length()==1 && Character.isAlphabetic(key.charAt(0))){
+					pressedKey = key;
 				}
-
 			}
 
 			@Override
-			public void keyReleased(KeyEvent e) {
-			}
+			public void keyReleased(KeyEvent e) {}
 		};
 		addKeyListener(listener);
 		setFocusable(true);
@@ -78,49 +44,46 @@ public class GUIGamePanel extends JPanel {
 		super.setSize(new Dimension (364,364));
 		g.setColor(java.awt.Color.WHITE);
 		g.fillRect(0, 0, 300, 300);
-		drawHangman(hangmanStage,g);
-		g.setColor(java.awt.Color.GRAY);
-		g.drawLine(0, 0, 0, 300);
-		g.drawLine(0, 0, 300, 0);
-		g.drawLine(300,0, 300, 300);
-		g.drawLine(0,300,300,300);
-		g.setColor(java.awt.Color.BLUE);
-		
-		//Draw Hangman 
-		g.fillRect(0,150 , 4, 150);
-		g.fillRect(0, 0, 4, 150);
-		g.fillRect(0, 0, 180, 4);
-		g.setColor(java.awt.Color.RED);
-		g.fillRect(180, 0, 4, 120);
-		
+		try {
+			drawHangman(hangmanStage,g);
+		} catch (IllegalStageException e) {
+			System.err.println("Something went wrong with arithmetic");
+			e.printStackTrace();
+		}		
 	}
 
-	public void drawHangman(int stage, Graphics g){
+	public void drawHangman(int stage, Graphics g) throws IllegalStageException{
 		g.setColor(java.awt.Color.BLUE);
 		switch(stage){
-		case 1:
-			g.fillRect(0,150 , 4, 300);
-		case 2:
+		case 8:
+			g.fillRect(0,150 , 4, 150);
+		case 7:
 			g.fillRect(0, 0, 4, 150);
-		case 3:
-			g.fillRect(0, 0, 180, 4);
-		case 4:
-			g.fillRect(180, 0, 4, 80);
-		case 5:
-			g.fillRect(180,80,8,40);
 		case 6:
+			g.fillRect(0, 0, 180, 4);
+		case 5:
+			g.fillRect(180, 0, 4, 80);
+		case 4:
+			g.fillRect(180,80,8,40);
+		case 3:
 			g.setColor(java.awt.Color.GREEN);
 			g.fillRect(0, 250, 300, 50);
 			g.setColor(java.awt.Color.BLUE);
-		case 7:
+		case 2:
 			g.setColor(java.awt.Color.RED);
 			g.fillRect(100, 200, 100, 20);
 			g.setColor(java.awt.Color.BLUE);
-		case 8:
-			g.fillOval(180, 120, 80, 80);
+		case 1:
+			g.fillOval(100, 120, 80, 80);
 			g.setColor(java.awt.Color.WHITE);
 			g.fillOval(200, 140, 40, 40);
 			g.setColor(java.awt.Color.BLUE);
+		default:
+			try {
+				Thread.sleep(300, 500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

@@ -1,21 +1,27 @@
 package uk.ac.cam.ap886.oopjava.supervisionProjects.Hangman;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Game {
-	protected 	Dictionary 	dictionary;		
+	protected 	Vocabulary 	vocab;		
 	protected 	Player 		player;		  	
 	protected 	char[] 		etalon;			
 	protected	ArrayList 	<Character> 	guessedLetters;
 	protected	char[] 		openedWord;		
 	protected	ArrayList	<Character>		wrongLetters;
 	protected 	UserInterface ui;			
-	protected 	final int 	TOTAL_GUESSES=9;
+	protected 	static final int 	TOTAL_GUESSES=9;
 	protected 	int 		currentGuesses;
 
 
 	public Game(){
-		dictionary = new ArrayDictionary ("words.txt");
+		try {
+			vocab = new ArrayVocabulary ("words.txt");
+		} catch (IOException e) {
+			System.err.println("An error reading the vocab");
+			e.printStackTrace();
+		}
 		ui = new GUIMainWindow(this);
 		player = new SimplePlayer(ui.playerName());
 		player.save();
@@ -24,7 +30,7 @@ public class Game {
 	}
 
 	public void reset(){
-		etalon = dictionary.getRandomWord().toCharArray();
+		etalon = vocab.getRandomWord().toCharArray();
 		openedWord= new char[etalon.length];
 		for(int i=0;i<etalon.length;i++)
 			openedWord[i]='_';
@@ -33,7 +39,7 @@ public class Game {
 		wrongLetters =new ArrayList<Character>();
 	}
 
-	public String getOpened(){
+	public String getOpenedWord(){
 		return new String(openedWord);
 	}
 
@@ -41,27 +47,37 @@ public class Game {
 		return player;
 	}
 
-	public ArrayList <Character> getGuessedLetters(){
+	public ArrayList <Character> getRightlyGuessedLetters(){
 		return wrongLetters;
 	}
 
 
-	protected boolean hasWon(){
+	protected boolean playerHasWon(){
 		return etalon.equals(openedWord);
 	}
 
 	public int getHangmanStage(){
 		return TOTAL_GUESSES-currentGuesses;
 	}
+	
+	public enum OUTCOME{
+		DUPLICATE(-1), WRONG(0), RIGHT(1);
+		
+		private final int value;
+		
+		OUTCOME (final int newValue){
+			value = newValue;
+		}
+	}
 
-	public int attempt(char letter){
+	public OUTCOME attempt(char letter){
 		boolean found=false;
 		if(letter ==0){
-			return -1;
+			return OUTCOME.DUPLICATE;
 		}
 		for(char l:guessedLetters){
 			if (l==letter){
-				return -1;
+				return OUTCOME.DUPLICATE;
 			}
 		}
 		guessedLetters.add(letter);
@@ -72,42 +88,49 @@ public class Game {
 			}
 		}
 
-		if(found){return 1;}
+		if(found){return OUTCOME.RIGHT;}
 		else{
 			currentGuesses--;
 			wrongLetters.add(letter);
-			return 0;
+			return OUTCOME.WRONG;
 		}
 	}
 
 	protected boolean gameOver(){
-		return hasWon()||currentGuesses<=0;
+		return playerHasWon()||currentGuesses<=0;
 	}
-	
+
 	public String getRightWord(){
 		return new String(etalon);
 	}
 
 	public static void main(String[] args){
-
 		Game current = new Game();
 		while(current.ui.continuePrompt()){
 			while(!current.gameOver()){
-				current.ui.status();
-				int userInput =current.attempt(current.ui.guessPrompt());
-				if(userInput==0){
-					current.ui.wrongGuess();
-				}else if(userInput>0){
-					current.ui.rightGuess();
-				}else{
-					current.ui.repeatedGuess();
+				try {
+					current.ui.status();
+				} catch (IllegalStageException e) {
+					System.err.println("Internal Error "+e.getMessage());
+					e.printStackTrace();
 				}
-			}if(current.hasWon()){
+				OUTCOME guessOutcome =current.attempt(
+						current.ui.guessPrompt());
+				if(guessOutcome.value==0){
+					current.ui.wrongGuessMessage();
+				}else if(guessOutcome.value>0){
+					current.ui.rightGuessMessage();
+				}else{
+					current.ui.repeatedGuessMessage();
+				}
+			}if(current.playerHasWon()){
 				current.ui.winPrompt();
 				current.player.win();
+				current.player.save();
 			}else{
 				current.ui.losePrompt();
 				current.player.lose();
+				current.player.save();
 			}
 
 		}

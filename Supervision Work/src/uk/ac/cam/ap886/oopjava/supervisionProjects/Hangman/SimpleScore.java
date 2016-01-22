@@ -1,25 +1,31 @@
 package uk.ac.cam.ap886.oopjava.supervisionProjects.Hangman;
 
-import java.time.LocalDateTime;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SimpleScore implements Score {
 	
 	private int gamesWon;
 	private int gamesLost;
-	private LocalDateTime firstRegistered;
+	private Date firstRegistered;
+	private DateFormat dateFormat;
 	
 	public SimpleScore(){
+		dateFormat = new SimpleDateFormat("DD/MM/yyyy::HH:mm:ss"); 
 		gamesWon = 0;
 		gamesLost=0;
-		firstRegistered =LocalDateTime.now(); 
+		firstRegistered=new Date();//Assigns the Current date 
 	}
 	
-	public SimpleScore(String formatLine){
+	public SimpleScore(String formatLine) throws ParseException{
+		dateFormat = new SimpleDateFormat("DD/MM/yyyy::HH:mm:ss"); 
 		String[] parts = new String[3];
 		parts= formatLine.split(" ");
 		gamesWon = Integer.parseInt(parts[0]);
 		gamesLost = Integer.parseInt(parts[1]);
-		firstRegistered = LocalDateTime.parse(parts[2]); 
+		firstRegistered = dateFormat.parse(parts[2]); 
 	}
 
 	@Override
@@ -47,14 +53,15 @@ public class SimpleScore implements Score {
 		return gamesWon + gamesLost;
 	}
 
-	@Override
-	public LocalDateTime getFirstRegistered() {
+	
+	public Date getFirstRegistered() {
 		return firstRegistered;
 	}
 	
 	@Override
 	public String toString(){
-		return gamesWon+" "+gamesLost+" " +firstRegistered;
+		return gamesWon+" "+gamesLost+" "
+	+dateFormat.format(firstRegistered);
 	}
 
 	@Override
@@ -65,6 +72,12 @@ public class SimpleScore implements Score {
 	@Override
 	public void lose() {
 	gamesLost++;	
+	}
+
+	@Override
+	public void resetFirstRegistered() {
+		firstRegistered = new Date();
+		
 	}
 
 }

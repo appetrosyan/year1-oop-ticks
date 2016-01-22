@@ -4,17 +4,17 @@ public interface UserInterface {
 
 	public String playerName();
 	
-	public void status();
+	public void status() throws IllegalStageException;
 	
 	public boolean continuePrompt();
 	
 	public char guessPrompt();
 	
-	public void wrongGuess();
+	public void wrongGuessMessage();
 	
-	public void rightGuess();
+	public void rightGuessMessage();
 	
-	public void repeatedGuess();
+	public void repeatedGuessMessage();
 	
 	public void winPrompt();
 	

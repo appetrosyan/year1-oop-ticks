@@ -1,6 +1,6 @@
 package uk.ac.cam.ap886.oopjava.supervisionProjects.Hangman;
 
-import java.time.LocalDateTime;
+import java.util.Date;;
 
 public interface Score {
 	
@@ -8,7 +8,8 @@ public interface Score {
 	public int getGamesLost();
 	public float getRating();
 	public int getGamesPlayed();
-	public LocalDateTime getFirstRegistered();
+	public Date getFirstRegistered();
+	public void resetFirstRegistered();
 	public void win();
 	public void lose();
 	

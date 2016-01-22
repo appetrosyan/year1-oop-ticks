@@ -6,21 +6,28 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 
 public class SimplePlayer implements Player {
 
 	private boolean isNew=false;
 	private String name;
-	private Score mScore;
+	private Score score;
 	private final String DEFAULT_PATH="players.txt";
 
 	//--------------------------------------------
 	
 	public SimplePlayer (String nName){
-		if(!this.loadFromFile( DEFAULT_PATH,nName)){
-		isNew=true;
-		name = nName;
-		mScore = new SimpleScore();
+		try {
+			if(!this.loadFromFile( DEFAULT_PATH,nName)){
+			isNew=true;
+			name = nName;
+			score = new SimpleScore();
+			}
+		} catch (ParseException e) {
+			System.err.println("There was an error parsing the date format line");
+			score.resetFirstRegistered();
+			e.printStackTrace();
 		}
 		
 	}
@@ -33,7 +40,7 @@ public class SimplePlayer implements Player {
 		try (FileWriter w = new FileWriter (fileName);){
 			w.write(name+"\n");
 			w.flush();
-			w.write(mScore.toString());
+			w.write(score.toString());
 			w.flush();
 		} catch (IOException e) {
 			e.printStackTrace();//Shouldn't happen
@@ -41,7 +48,7 @@ public class SimplePlayer implements Player {
 
 	}
 	
-	public boolean loadFromFile(String fileName, String playerName){
+	public boolean loadFromFile(String fileName, String playerName) throws ParseException{
 		try(BufferedReader br = new BufferedReader (new FileReader(fileName))){
 			String temp= " ";
 			while (null!=temp){
@@ -51,8 +58,8 @@ public class SimplePlayer implements Player {
 					name = temp;
 					temp = br.readLine();
 					if(temp!=null){
-					mScore = new SimpleScore (temp);
-					}else{mScore = new SimpleScore();}
+					score = new SimpleScore (temp);
+					}else{score = new SimpleScore();}
 					return true;
 				}
 			}
@@ -81,19 +88,19 @@ public class SimplePlayer implements Player {
 
 	@Override
 	public Score getScore() {
-		return mScore;
+		return score;
 	}
 	
 	
 
 	@Override
 	public void win() {
-		mScore.win();
+		score.win();
 	}
 
 	@Override
 	public void lose() {	
-		mScore.lose();
+		score.lose();
 	}
 
 	@Override

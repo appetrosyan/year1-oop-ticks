@@ -15,19 +15,14 @@ import javax.swing.JSeparator;
 public class GUIMainWindow implements UserInterface{
 	Game game;
 	boolean firstRun=true;
-	
-	JLabel lblName;
-	JLabel lblGamesWon;
-	JLabel lblLettersTried;
-	JLabel openedWord;
-	JLabel lblStatus;
-	GUIGamePanel hangmanPanel;
-
-	public GUIMainWindow (Game newGame){
-		game = newGame;
-		initialize();
-	}
-
+	protected JLabel lblName;
+	protected JLabel lblGamesWon;
+	protected JLabel lblLettersTried;
+	protected JLabel openedWord;
+	protected JLabel lblStatus;
+	protected JPanel statsPanel;
+	protected JLabel lblPlayerStats;
+	protected GUIGamePanel hangmanPanel;
 	private JFrame frame;
 	private JSeparator separator;
 
@@ -51,29 +46,43 @@ public class GUIMainWindow implements UserInterface{
 	/**
 	 * Create the application.
 	 */
+	public GUIMainWindow (Game newGame){
+		game = newGame;
+		initialiseFrame();
+		initialisePanels();
+		initialiseLabels();
+	}
+	
 	public GUIMainWindow() {
-		initialize();
+		initialiseFrame();
+		initialisePanels();
+		initialiseLabels();
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialise the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialiseFrame() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 489, 338);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.X_AXIS));
 		frame.setMinimumSize(new Dimension (364,364));
-
-		JPanel statsPanel = new JPanel();
+		
+	}
+	
+	private void initialisePanels(){
+		statsPanel = new JPanel();
 		statsPanel.setMinimumSize(new Dimension(200, 400));
 		statsPanel.setIgnoreRepaint(true);
 		statsPanel.setFocusable(false);
 		statsPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		statsPanel.setLayout(null);
 		frame.getContentPane().add(statsPanel);
-
-		JLabel lblPlayerStats = new JLabel("Player Stats:");
+	}
+	
+	private void initialiseLabels(){
+		lblPlayerStats = new JLabel("Player Stats:");
 		lblPlayerStats.setBounds(29, 12, 195, 15);
 		statsPanel.add(lblPlayerStats);
 
@@ -122,13 +131,11 @@ public class GUIMainWindow implements UserInterface{
 
 	@Override
 	public void status() {
-		lblLettersTried.setText(game.getGuessedLetters().toString());
-		openedWord.setText(game.getOpened());
+		lblLettersTried.setText(game.getRightlyGuessedLetters().toString());
+		openedWord.setText(game.getOpenedWord());
 		hangmanPanel.setHangmanStage(game.getHangmanStage());
 		hangmanPanel.repaint();
-		return;
 		//Useless in terms of GUI;
-
 	}
 
 	@Override
@@ -141,8 +148,7 @@ public class GUIMainWindow implements UserInterface{
 			lblStatus.setText("Welcome "+game.getPlayer().getName());
 			return true;
 		}else{
-		return JOptionPane.showConfirmDialog(frame,"You've "+(game.hasWon()?"won.":"lost.")+"\nThe Word was "+game.getRightWord()+ "\nWould you Like to Quit?")==1;
-		//TODO fix integer Assignments
+		return JOptionPane.showConfirmDialog(frame,"You've "+(game.playerHasWon()?"won.":"lost.")+"\nThe Word was "+game.getRightWord()+ "\nWould you Like to Quit?")==1;
 		}
 	}
 
@@ -158,7 +164,7 @@ public class GUIMainWindow implements UserInterface{
 	}
 
 	@Override
-	public void wrongGuess() {
+	public void wrongGuessMessage() {
 		lblStatus.setText("Sorry, Wrong Guess");
 		drawHangman(game.getHangmanStage());
 
@@ -167,13 +173,13 @@ public class GUIMainWindow implements UserInterface{
 	
 
 	@Override
-	public void rightGuess() {
+	public void rightGuessMessage() {
 		lblStatus.setText("Good Guess");
 
 	}
 
 	@Override
-	public void repeatedGuess() {
+	public void repeatedGuessMessage() {
 		lblStatus.setText("Waiting for (unique) Keyboard Input.");
 
 	}
@@ -181,12 +187,15 @@ public class GUIMainWindow implements UserInterface{
 	@Override
 	public void winPrompt() {
 		lblStatus.setText("You've Won");
+		lblGamesWon.setText(game.getPlayer().getScore().getGamesWon()+"/"+game.getPlayer().getScore().getGamesPlayed());
 
 	}
 
 	@Override
 	public void losePrompt() {
 		lblStatus.setText("You've Lost");
+		lblGamesWon.setText(game.getPlayer().getScore().getGamesWon()+"/"+game.getPlayer().getScore().getGamesPlayed());
+
 
 	}
 

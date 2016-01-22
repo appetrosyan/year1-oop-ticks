@@ -3,12 +3,13 @@ package uk.ac.cam.ap886.oopjava.supervisionProjects.Hangman;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import static java.lang.System.out;
 
 public class CLI implements UserInterface {
 	
 	
-	Game game;
-	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	private Game game;
+	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	
 	
 	//----------------
@@ -19,11 +20,7 @@ public class CLI implements UserInterface {
 	
 	
 	
-	private void prn(String arg){
-		System.out.println(arg);
-	}
-	
-	private String scn(){
+	private String scanInput(){
 		try {
 			return br.readLine().trim();
 		} catch (IOException e) {
@@ -43,155 +40,124 @@ public class CLI implements UserInterface {
 
 	@Override
 	public String playerName() {
-		prn("Please Enter a Player's name");
-		return scn();
+		out.println("Please Enter a Player's name");
+		return scanInput();
 	}
 	
-	public boolean parseYesNo(String input){
-		input=input.toLowerCase();
-		switch (input){
-		case "yes":
-		case "y":
-		case "u":
-		case "t":
-			return true;
-		default :
-			return false;
-		}
-	}
-	
-	private void drawHangman(int stage){
+	private void drawHangman(int stage) throws IllegalStageException{
 		switch(stage){
 		case 1:
-			prn("               ");
-			prn("                ");
-			prn("                ");
-			prn("                ");
-			prn("          0     ");
-			prn("         /|\\   ");
-			prn("         / \\   ");
+			out.println("                "+
+						"                "+
+						"                "+
+						"                "+
+						"          0     "+
+						"         /|\\   "+
+						"         / \\   ");
 		                       
 			break;             
 		case 2:
-			prn("               ");
-			prn("                ");
-			prn("          0     ");
-			prn("         /|\\   ");
-			prn("         / \\   ");
-			prn("                ");
-			prn("                ");
+			out.println("                "+
+						"                "+
+						"          0     "+
+						"         /|\\   "+
+						"         / \\   "+
+						"                "+
+						"                ");
 			
 			break;
 		case 3:
-			prn("               ");
-			prn("                ");
-			prn("          0     ");
-			prn("         /|\\   ");
-			prn("         / \\   ");
-			prn("       _______  ");
-			prn("                ");
+			out.println("                "+
+						"                "+
+						"          0     "+
+						"         /|\\   "+
+						"         / \\   "+
+						"       _______  "+
+						"                ");
 			
 			
 			break;
 		case 4:
-			prn("               ");
-			prn("                ");
-			prn("          0     ");
-			prn("         /|\\   ");
-			prn("         / \\   ");
-			prn("|      _______  ");
-			prn("|               ");
-			
+			out.println("                "+
+						"                "+
+						"          0     "+
+						"         /|\\   "+
+						"         / \\   "+
+						"|      _______  "+
+						"|               ");
 		break;
 		case 5:
-			prn("               ");
-			prn("                ");
-			prn("          0     ");
-			prn("|        /|\\   ");
-			prn("|        / \\   ");
-			prn("|      _______  ");
-			prn("|               ");
+			out.println("                "+
+						"                "+
+						"          0     "+
+						"|        /|\\   "+
+						"|        / \\   "+
+						"|      _______  "+
+						"|               ");
 			
 			break;
 		case 6:
-			prn("               ");
-			prn("|               ");
-			prn("|         0     ");
-			prn("|        /|\\   ");
-			prn("|        / \\   ");
-			prn("|      _______  ");
-			prn("|               ");
+			out.println("                "+
+						"|               "+
+						"|         0     "+
+						"|        /|\\   "+
+						"|        / \\   "+
+						"|      _______  "+
+						"|               ");
 			
 			break;
 		case 7:
-			prn(" _________     ");
-			prn("|               ");
-			prn("|         0     ");
-			prn("|        /|\\   ");
-			prn("|        / \\   ");
-			prn("|      _______  ");
-			prn("|               ");
+			out.println(" _________      "+
+						"|               "+
+						"|         0     "+
+						"|        /|\\   "+
+						"|        / \\   "+
+						"|      _______  "+
+						"|               ");
 			
 		break;
 		case 8:
-			prn(" _________     ");
-			prn("|         |     ");
-			prn("|         0     ");
-			prn("|        /|\\   ");
-			prn("|        / \\   ");
-			prn("|               ");
-			prn("|               ");
+			out.println(" _________      "+
+						"|         |     "+
+						"|         0     "+
+						"|        /|\\   "+
+						"|        / \\   "+
+						"|               "+
+						"|               ");
 		
 		break;
 		default:
-			
-		break;
+			throw new IllegalStageException(stage);
 		}
 	}
 
 	@Override
-	public void status() {
-		prn(game.getPlayer().getName()+" - "+game.getOpened());
-		prn("Tried the letters: "+game.getGuessedLetters());
+	public void status() throws IllegalStageException {
+		out.println(game.getPlayer().getName()+" - "+game.getOpenedWord());
+		out.println("Tried the letters: "+game.getRightlyGuessedLetters());
 		drawHangman(game.getHangmanStage());
 	}
 
 	@Override
 	public boolean continuePrompt() {
-		prn("Would you like to Play the Game (Yes/No, defaults to No)?");
-		return parseYesNo(scn());
-	}
-
-	@Override
-	public void wrongGuess() {
-		//Stub for GUI
-	}
-
-	@Override
-	public void rightGuess() {
-		//Stub for GUI
-
-	}
-
-	@Override
-	public void repeatedGuess() {
-		prn("The letter you've put in was already used");
+		out.println("Would you like to Play the Game (Yes/No, defaults to No)?");
+		return LanguageParser.parseYesNo(scanInput());
 	}
 
 	@Override
 	public void winPrompt() {
-		prn("Congratulations you have won!");
+		out.println("Congratulations you have won!");
 	}
 
 	@Override
 	public void losePrompt() {
-		prn("Sorry you've lost!");
-		prn("The word you were trying to guess was :"+game.getRightWord());
+		out.println("Sorry you've lost!");
+		out.println("The word you were trying to guess was :"+game.getRightWord());
 	}
 
 	@Override
 	public char guessPrompt() {
-		prn("Please enter a letter, to be guessed. If multiple are entered the first will be considered");
+		out.println("Please enter a letter, to be guessed. If multiple are entered the first will be considered");
 		return getch();
 	}
 
@@ -200,10 +166,38 @@ public class CLI implements UserInterface {
 	@Override
 	public void greet(Player player) {
 		if(player.isNew()){
-			prn("Welcome " +player.getName() );
+			out.println("Welcome " +player.getName() );
 		}else{
-			prn("Hello, welcome back "+player.getName());
+			out.println("Hello, welcome back "+player.getName());
 		}
 	}
+
+
+
+	@Override
+	public void wrongGuessMessage() {
+		//GUI Stub
+		
+	}
+
+
+
+	@Override
+	public void rightGuessMessage() {
+		//GUI Stub
+		
+	}
+
+
+
+	@Override
+	public void repeatedGuessMessage() {
+		out.println("The letter you've put in was already used");
+		
+	}
+
+
+
+	
 
 }
